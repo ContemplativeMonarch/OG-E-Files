@@ -11,7 +11,7 @@ class Program
     }
 
     
-    static Dictionary<string, List<IdentityAccessRecord>> Read(string fileName)
+    static List<IdentityAccessRecord> Read(string fileName)
     {
         using StreamReader s = new StreamReader(fileName);
          s.ReadLine();
@@ -33,35 +33,26 @@ class Program
         }
         finally { s.Close(); }
 
-        Dictionary<string, List<IdentityAccessRecord>> dict = new Dictionary<string, List<IdentityAccessRecord>>();
+         List<IdentityAccessRecord> dict = new List<IdentityAccessRecord>();
         foreach (string[] strArr in list)
         {
             IdentityAccessRecord info = new IdentityAccessRecord(
-                DisplayName: strArr[0],
+                strArr[0],
                 strArr[1],
                 strArr[2],
                 strArr[3],
                 strArr[4],
                 strArr[5],
-                strArr[6],
+                bool.Parse(strArr[6]),
                 strArr[7],
                 strArr[8],
                 strArr[9],
                 strArr[10],
                 strArr[11],
                 strArr[12], 
-                strArr[13],
-                strArr[4]);
-            if (!dict.ContainsKey(student.ID)}
-            {
-                List<Student> studentList = new List<Student>();
-                studentList.Add(student);
-                dict.Add(student.ID, studentList);
-            }
-            else
-            {
-                dict[student.ID].Add(student);
-            }
+                strArr[13]);
+            dict.Add(info);
+         
         }
         return dict;
 
