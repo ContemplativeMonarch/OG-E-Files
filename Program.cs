@@ -1,4 +1,8 @@
-﻿namespace OG_E_Files;
+﻿using System.Data;
+using System.IO.Pipes;
+using System.Reflection.Metadata;
+
+namespace OG_E_Files;
 
 
 class Program
@@ -8,15 +12,20 @@ class Program
         Console.WriteLine("Hello, World!");
         List<IdentityAccessRecord> l = Read("Francis Tuttle Identities_Basic.csv");
         Console.WriteLine("Number of Files: " + l.Count());
-        // Dictionary<string, List<Student>> s = Read("Attendence - Sheet1.csv");
-        // display(s);
+        var activity = from IdentityAccessRecord in l where IdentityAccessRecord.CloudLifecycleState != true select IdentityAccessRecord;
+        Console.WriteLine("Number of inactive Users: " + activity.Count());
+
+        var activity2 = from IdentityAccessRecord in l
+                        orderby IdentityAccessRecord.DisplayName
+                        group IdentityAccessRecord by IdentityAccessRecord.Uid into users
+                         select users
     }
 
-    
+
     static List<IdentityAccessRecord> Read(string fileName)
     {
         using StreamReader s = new StreamReader(fileName);
-         s.ReadLine();
+        s.ReadLine();
         string line = s.ReadLine();
 
         List<string[]> list = new List<string[]>();
@@ -35,7 +44,7 @@ class Program
         }
         finally { s.Close(); }
 
-         List<IdentityAccessRecord> dict = new List<IdentityAccessRecord>();
+        List<IdentityAccessRecord> dict = new List<IdentityAccessRecord>();
         foreach (string[] strArr in list)
         {
             IdentityAccessRecord info = new IdentityAccessRecord(
@@ -43,7 +52,7 @@ class Program
                 strArr[1],
                 strArr[2],
                 strArr[3],
-                strArr[4],
+               checkIfActive(strArr[4]),
                 strArr[5],
                 bool.Parse(strArr[6]),
                 strArr[7],
@@ -51,14 +60,18 @@ class Program
                 strArr[9],
                 strArr[10],
                 strArr[11],
-                strArr[12], 
+                strArr[12],
                 strArr[13]);
             dict.Add(info);
-         
+
         }
         return dict;
 
 
+    }
+    static bool checkIfActive(string s) {
+        if(s.Equals("active"))  return true;
+        return false;
     }
 
     // static void display(Dictionary<string, List<Student>> Dict)
@@ -104,7 +117,7 @@ public struct IdentityAccessRecord
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string WorkEmail { get; set; }
-    public string CloudLifecycleState { get; set; } // Changed to string for "active"
+    public bool CloudLifecycleState { get; set; } // Changed to string for "active"
     public string IdentityId { get; set; }
     public bool IsManager { get; set; }
     public string Department { get; set; }
@@ -120,7 +133,7 @@ public struct IdentityAccessRecord
     // Constructor
     public IdentityAccessRecord(
         string displayName, string firstName, string lastName, string workEmail, 
-        string cloudLifecycleState, string identityId, bool isManager, string department, 
+        bool cloudLifecycleState, string identityId, bool isManager, string department, 
         string jobTitle, string uid, string accessType, string accessSourceName, 
         string accessDisplayName, string accessDescription)
     {
