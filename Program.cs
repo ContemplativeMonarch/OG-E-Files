@@ -6,6 +6,8 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
+        List<IdentityAccessRecord> l = Read("Francis Tuttle Identities_Basic.csv");
+        Console.WriteLine("Number of Files: " + l.Count());
         // Dictionary<string, List<Student>> s = Read("Attendence - Sheet1.csv");
         // display(s);
     }
