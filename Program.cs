@@ -10,19 +10,58 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("Hello, World!");
-        List<IdentityAccessRecord> l = Read("Francis Tuttle Identities_Basic.csv");
+        List<IdentityAccessRecord> l = ReadCsV("Francis Tuttle Identities_Basic.csv");
         Console.WriteLine("Number of Files: " + l.Count());
         var activity = from IdentityAccessRecord in l where IdentityAccessRecord.CloudLifecycleState != true select IdentityAccessRecord;
         Console.WriteLine("Number of inactive Users: " + activity.Count());
 
-        var activity2 = from IdentityAccessRecord in l
-                        orderby IdentityAccessRecord.DisplayName
-                        group IdentityAccessRecord by IdentityAccessRecord.Uid into users
-                         select users
+        var Departments = from IdentityAccessRecord in l group IdentityAccessRecord by IdentityAccessRecord.Department into departments
+                          select new
+                          {
+                              Name = departments.Key,
+                              People = departments
+                          };
+        foreach (var name in Departments)
+        {
+            Console.WriteLine($"Name: {name.Name}");
+            Console.WriteLine($"  People: {name.People.Count()}");    
+        }
+
+      /*  var activity2 = (from poops in activity
+                         orderby poops.DisplayName
+                         select poops.DisplayName).Distinct();
+
+        foreach (var name in activity2)
+        {
+            Console.WriteLine(name);
+        }
+*/
+        /*  var peeps = from peels in activity
+                      group peels by peels.DisplayName into AccessItems
+                      select new
+                      {
+                          Name = AccessItems.Key,
+                          Access = AccessItems
+                      };
+
+          foreach (var person in peeps)
+          {
+              Console.WriteLine($"Name: {person.Name}");
+              foreach (var access in person.Access)
+              {
+
+                   if (access.AccessSourceName.Length != 0)   Console.WriteLine($"     Source Name: {access.AccessSourceName}");
+                  if (access.AccessDisplayName.Length != 0)  Console.WriteLine($"     Description: {access.AccessDisplayName}");
+
+              }
+          }
+         */ 
+       
+
     }
 
 
-    static List<IdentityAccessRecord> Read(string fileName)
+    static List<IdentityAccessRecord> ReadCsV(string fileName)
     {
         using StreamReader s = new StreamReader(fileName);
         s.ReadLine();
