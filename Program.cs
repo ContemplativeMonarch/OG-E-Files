@@ -15,27 +15,30 @@ class Program
         var activity = from IdentityAccessRecord in l where IdentityAccessRecord.CloudLifecycleState != true select IdentityAccessRecord;
         Console.WriteLine("Number of inactive Users: " + activity.Count());
 
-        var Departments = from IdentityAccessRecord in l group IdentityAccessRecord by IdentityAccessRecord.Department into departments
+        var Departments = from IdentityAccessRecord in l
+                          group IdentityAccessRecord by IdentityAccessRecord.Department into departments
                           select new
                           {
                               Name = departments.Key,
-                              People = departments
+                              People = from s in departments where s.CloudLifecycleState != true where s.AccessType != null select s
                           };
         foreach (var name in Departments)
         {
             Console.WriteLine($"Name: {name.Name}");
-            Console.WriteLine($"  People: {name.People.Count()}");    
+            Console.WriteLine($"  People: {name.People.Count()}");
         }
 
-      /*  var activity2 = (from poops in activity
-                         orderby poops.DisplayName
-                         select poops.DisplayName).Distinct();
 
-        foreach (var name in activity2)
-        {
-            Console.WriteLine(name);
-        }
-*/
+
+        /*  var activity2 = (from poops in activity
+                           orderby poops.DisplayName
+                           select poops.DisplayName).Distinct();
+
+          foreach (var name in activity2)
+          {
+              Console.WriteLine(name);
+          }
+  */
         /*  var peeps = from peels in activity
                       group peels by peels.DisplayName into AccessItems
                       select new
@@ -55,8 +58,8 @@ class Program
 
               }
           }
-         */ 
-       
+         */
+
 
     }
 
